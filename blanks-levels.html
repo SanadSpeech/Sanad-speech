@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مستويات بلانكس للغة</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Tajawal', sans-serif;
+    background: #f0f4f8;
+    min-height: 100vh;
+    padding: 20px;
+  }
+  h1 {
+    text-align: center;
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: #1a237e;
+    margin-bottom: 6px;
+  }
+  .subtitle {
+    text-align: center;
+    color: #555;
+    margin-bottom: 20px;
+    font-size: 0.95rem;
+  }
+  /* Tab Nav */
+  .tabs {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+  }
+  .tab-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 50px;
+    font-family: 'Tajawal', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all .2s;
+    opacity: .6;
+  }
+  .tab-btn.active { opacity: 1; transform: scale(1.05); box-shadow: 0 4px 12px rgba(0,0,0,.2); }
+  .tab-btn:nth-child(1) { background: #e3f2fd; color: #1565c0; }
+  .tab-btn:nth-child(2) { background: #e8f5e9; color: #2e7d32; }
+  .tab-btn:nth-child(3) { background: #fff3e0; color: #e65100; }
+  .tab-btn:nth-child(4) { background: #fce4ec; color: #c62828; }
+  .tab-btn:nth-child(1).active { background: #1565c0; color: white; }
+  .tab-btn:nth-child(2).active { background: #2e7d32; color: white; }
+  .tab-btn:nth-child(3).active { background: #e65100; color: white; }
+  .tab-btn:nth-child(4).active { background: #c62828; color: white; }
+
+  /* Level Panel */
+  .panel { display: none; animation: fadeIn .3s ease; }
+  .panel.active { display: block; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+
+  .level-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    padding: 14px 20px;
+    border-radius: 14px;
+    color: white;
+    font-size: 1.2rem;
+    font-weight: 900;
+  }
+  .l1 .level-header { background: linear-gradient(135deg,#1565c0,#42a5f5); }
+  .l2 .level-header { background: linear-gradient(135deg,#2e7d32,#66bb6a); }
+  .l3 .level-header { background: linear-gradient(135deg,#e65100,#ffa726); }
+  .l4 .level-header { background: linear-gradient(135deg,#c62828,#ef5350); }
+
+  /* Question Cards */
+  .questions { display: flex; flex-direction: column; gap: 12px; }
+  .q-card {
+    background: white;
+    border-radius: 14px;
+    padding: 16px 18px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.06);
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    transition: box-shadow .2s;
+  }
+  .q-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.12); }
+  .q-num {
+    min-width: 34px; height: 34px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 900; font-size: 1rem; color: white; flex-shrink: 0;
+  }
+  .l1 .q-num { background: #1565c0; }
+  .l2 .q-num { background: #2e7d32; }
+  .l3 .q-num { background: #e65100; }
+  .l4 .q-num { background: #c62828; }
+
+  .q-body { flex: 1; }
+  .q-text {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #222;
+    line-height: 1.6;
+    margin-bottom: 10px;
+  }
+  .q-hint {
+    display: inline-block;
+    background: #fff8e1;
+    border: 1px solid #ffe082;
+    border-radius: 8px;
+    padding: 3px 10px;
+    font-size: 0.85rem;
+    color: #795548;
+    margin-bottom: 10px;
+  }
+  .answer-box {
+    width: 100%;
+    border: 2px dashed #ddd;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-family: 'Tajawal', sans-serif;
+    font-size: 1rem;
+    color: #333;
+    resize: none;
+    min-height: 42px;
+    outline: none;
+    transition: border-color .2s;
+    background: #fafafa;
+  }
+  .answer-box:focus { border-color: #90caf9; background: white; }
+  .l2 .answer-box:focus { border-color: #a5d6a7; }
+  .l3 .answer-box:focus { border-color: #ffcc80; }
+  .l4 .answer-box:focus { border-color: #ef9a9a; }
+
+  /* Print / Clear buttons */
+  .actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 28px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    padding: 11px 28px;
+    border: none;
+    border-radius: 50px;
+    font-family: 'Tajawal', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .btn-print { background: #1a237e; color: white; }
+  .btn-print:hover { background: #283593; transform: scale(1.03); }
+  .btn-clear { background: #eceff1; color: #546e7a; }
+  .btn-clear:hover { background: #cfd8dc; }
+
+  @media print {
+    body { background: white; padding: 10px; }
+    .tabs, .actions { display: none; }
+    .panel { display: block !important; margin-bottom: 40px; }
+    .q-card { break-inside: avoid; }
+    .answer-box { border: 1px solid #aaa; background: white; }
+  }
+</style>
+</head>
+<body>
+
+<h1>📋 مستويات بلانكس للغة</h1>
+<p class="subtitle">أسئلة المستويات 1 إلى 4 – صورة الملعب</p>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="showLevel(1)">🔵 المستوى 1 – التذكّر</button>
+  <button class="tab-btn" onclick="showLevel(2)">🟢 المستوى 2 – الفهم</button>
+  <button class="tab-btn" onclick="showLevel(3)">🟠 المستوى 3 – التطبيق</button>
+  <button class="tab-btn" onclick="showLevel(4)">🔴 المستوى 4 – التحليل</button>
+</div>
+
+<!-- LEVEL 1 -->
+<div class="panel l1 active" id="panel1">
+  <div class="level-header">🔵 المستوى الأول – التذكّر (Recall)</div>
+  <div class="questions" id="q1"></div>
+</div>
+
+<!-- LEVEL 2 -->
+<div class="panel l2" id="panel2">
+  <div class="level-header">🟢 المستوى الثاني – الفهم (Comprehension)</div>
+  <div class="questions" id="q2"></div>
+</div>
+
+<!-- LEVEL 3 -->
+<div class="panel l3" id="panel3">
+  <div class="level-header">🟠 المستوى الثالث – التطبيق (Application)</div>
+  <div class="questions" id="q3"></div>
+</div>
+
+<!-- LEVEL 4 -->
+<div class="panel l4" id="panel4">
+  <div class="level-header">🔴 المستوى الرابع – التحليل / التركيب (Analysis)</div>
+  <div class="questions" id="q4"></div>
+</div>
+
+<div class="actions">
+  <button class="btn btn-print" onclick="window.print()">🖨️ طباعة</button>
+  <button class="btn btn-clear" onclick="clearAll()">🗑️ مسح الإجابات</button>
+</div>
+
+<script>
+const data = {
+  1: [
+    { q: "ماذا ترى؟", hint: "أشر إلى الزحليقة" },
+    { q: "ما هذا؟", hint: "أشر إلى حبل القفز" },
+    { q: "أشر إلى الشجرة." },
+    { q: "أرني الزحليقة." },
+    { q: "ماذا ترى؟", hint: "أشر إلى كرة القدم" },
+    { q: "ابحث عن شيء آخر مثل هذا.", hint: "أشر إلى سحابة" },
+    { q: "أشر إلى الممر / الطريق." },
+    { q: "ابحث عن شيء آخر مثل هذا.", hint: "أشر إلى علبة طعام أحد الأطفال" },
+    { q: "ماذا ترى؟", hint: "أشر إلى الزهرة – زهر النرجس مقبول أيضاً" },
+    { q: "أرني الفراشة." },
+  ],
+  2: [
+    { q: "ماذا تفعل البنت؟", hint: "أشر إلى البنت التي تقفز بالحبل" },
+    { q: "ماذا يفعل الولد؟", hint: "أشر إلى الولد الذي يراقب الفراشة" },
+    { q: "ما النمط على القميص؟", hint: "أشر إلى البنت التي ترتدي القميص المخطط" },
+    { q: "أشر إلى الزحليقة الحمراء." },
+    { q: "هل يمكنك إيجاد الزهرة الكبيرة؟" },
+    { q: "هل يمكنك إيجاد الزهرة البنفسجية / الأرجوانية؟" },
+    { q: "الفراشة تطير في السماء. هل يمكنك تسمية شيء آخر يطير في السماء؟" },
+    { q: "أخبرني بشيء واحد يرتديه الولد.", hint: "أشر إلى الولد الذي يركل الكرة" },
+    { q: "هل يمكنك الإشارة إلى زهرة صغيرة؟" },
+    { q: "ماذا يحدث في هذه الصورة؟" },
+  ],
+  3: [
+    { q: "أشر إلى المقعد وسحابة وشجرة." },
+    { q: "أشر إلى طفل لا يرتدي شورتاً (بنطال قصير)." },
+    { q: "أشر إلى الكرة وفراشة وحبل القفز." },
+    { q: "ماذا قد يحدث بعد ذلك؟", hint: "أشر إلى الولد الذي على الزحليقة" },
+    { q: "هؤلاء ثلاثة أطفال – أيّهم لا يأكل فاكهة؟" },
+    { q: "ماذا قد تفكر البنت؟", hint: "أشر إلى البنت التي تأكل التفاحة" },
+    { q: "ماذا تعني كلمة 'ملعب'؟" },
+    { q: "ماذا تعني كلمة 'مشاركة / تقاسم'؟" },
+    { q: "أشر إلى شيء لا يمكنك الأرجحة عليه." },
+    { q: "كيف تشعر البنت؟", hint: "أشر إلى البنت التي تأكل التفاحة" },
+  ],
+  4: [
+    { q: "ماذا ستفعل لو سقط الولد من الزحليقة؟" },
+    { q: "أخبرني بشيئين آخرين (غير الزحليقة) يمكنك تسلّقهما." },
+    { q: "ما الفصل من العام؟ وكيف تعرف ذلك؟" },
+    { q: "لماذا تعتقد أن بعض الأطفال يرتدون شورتاً (بنطال قصير)؟" },
+    { q: "كرة القدم شكلها مستدير – ماذا سيحدث لو لم تكن مستديرة؟" },
+    { q: "لو لم يكن للأطفال ملعب قريباً منهم، أين يمكنهم اللعب؟" },
+    { q: "لماذا يأكل الأطفال طعامهم على المقعد؟" },
+    { q: "لماذا يلعب الأطفال في الملعب؟" },
+    { q: "يوجد سياج حول الملعب – لماذا؟", hint: "أشر إلى السياج" },
+    { q: "كيف تعرف أن الأطفال يلعبون في الخارج؟" },
+  ],
+};
+
+function buildQuestions() {
+  [1,2,3,4].forEach(lvl => {
+    const container = document.getElementById('q'+lvl);
+    data[lvl].forEach((item, i) => {
+      const card = document.createElement('div');
+      card.className = 'q-card';
+      card.innerHTML = `
+        <div class="q-num">${i+1}</div>
+        <div class="q-body">
+          <div class="q-text">${item.q}</div>
+          ${item.hint ? `<div class="q-hint">💡 ${item.hint}</div>` : ''}
+          <textarea class="answer-box" rows="1" placeholder="الإجابة..." 
+            oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"
+          ></textarea>
+        </div>
+      `;
+      container.appendChild(card);
+    });
+  });
+}
+
+function showLevel(n) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel'+n).classList.add('active');
+  document.querySelectorAll('.tab-btn')[n-1].classList.add('active');
+}
+
+function clearAll() {
+  if (confirm('هل تريد مسح جميع الإجابات؟')) {
+    document.querySelectorAll('.answer-box').forEach(el => {
+      el.value = '';
+      el.style.height = 'auto';
+    });
+  }
+}
+
+buildQuestions();
+</script>
+</body>
+</html>
