@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>المتشابه والمختلف</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Tajawal', sans-serif;
+  min-height: 100vh;
+  background: linear-gradient(160deg, #0f2027, #203a43, #2c5364);
+  direction: rtl;
+  overflow-x: hidden;
+}
+.wrap { max-width: 580px; margin: 0 auto; padding: 16px 14px 50px; }
+
+.title-box { text-align: center; margin-bottom: 18px; }
+.title {
+  font-size: 1.9rem; font-weight: 900;
+  background: linear-gradient(135deg, #a8edea, #fed6e3);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.sub { color: #8892b0; font-size: .9rem; margin-top: 4px; }
+
+.hud {
+  display: flex; justify-content: space-between;
+  background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1);
+  border-radius: 16px; padding: 9px 18px; margin-bottom: 10px;
+}
+.hud-item { text-align: center; }
+.hud-label { font-size: .72rem; color: #8892b0; }
+.hud-val { font-size: 1.3rem; font-weight: 900; color: #eee; }
+
+.prog-wrap { background: rgba(255,255,255,.08); border-radius: 10px; height: 8px; margin-bottom: 16px; overflow: hidden; }
+.prog-bar { height: 100%; background: linear-gradient(90deg, #a8edea, #fed6e3); border-radius: 10px; transition: width .5s; }
+
+.card {
+  background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1);
+  border-radius: 22px; padding: 22px 18px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.4);
+  animation: cardIn .4s ease;
+}
+@keyframes cardIn { from{transform:translateY(20px);opacity:0} to{transform:translateY(0);opacity:1} }
+
+.instruction { text-align: center; font-size: 1.1rem; font-weight: 700; margin-bottom: 20px; padding: 10px 14px; border-radius: 12px; }
+.inst-same { color: #a8edea; background: rgba(168,237,234,.08); border: 1px solid rgba(168,237,234,.2); }
+.inst-diff { color: #fed6e3; background: rgba(254,214,227,.08); border: 1px solid rgba(254,214,227,.2); }
+
+.items-row { display: flex; justify-content: center; align-items: center; gap: 16px; margin-bottom: 24px; }
+.item-card {
+  background: rgba(255,255,255,.08); border: 2px solid rgba(255,255,255,.15);
+  border-radius: 20px; padding: 18px 14px; width: 130px; text-align: center;
+}
+.item-emoji { font-size: 3.5rem; display: block; margin-bottom: 8px; }
+.item-name { font-size: 1rem; font-weight: 700; color: #eee; }
+.vs { font-size: 2rem; color: #a8edea; font-weight: 900; }
+
+.hint {
+  border: 1px solid; border-radius: 12px; padding: 11px 14px;
+  text-align: center; font-weight: 700; font-size: 1.05rem;
+  margin-bottom: 16px; display: none;
+}
+
+/* 3-button row */
+.btn-row { display: flex; gap: 10px; justify-content: center; }
+.ans-btn {
+  border: 2px solid rgba(255,255,255,.15);
+  border-radius: 18px; padding: 14px 10px;
+  font-family: 'Tajawal', sans-serif; font-weight: 700;
+  cursor: pointer; transition: all .2s; text-align: center;
+  background: rgba(255,255,255,.05); color: #eee;
+  flex: 1;
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+}
+.ans-btn .btn-icon { font-size: 1.7rem; }
+.ans-btn .btn-label { font-size: .95rem; }
+.ans-btn:hover:not(:disabled) {
+  transform: translateY(-3px);
+  background: rgba(255,255,255,.1);
+  border-color: rgba(255,255,255,.35);
+}
+.btn-correct {
+  border-color: #2ecc71 !important;
+  background: rgba(46,204,113,.2) !important;
+  color: #2ecc71 !important;
+  transform: scale(1.05) !important;
+  box-shadow: 0 0 20px rgba(46,204,113,.3);
+}
+.btn-wrong {
+  border-color: #e74c3c !important;
+  background: rgba(231,76,60,.18) !important;
+  color: #e74c3c !important;
+  animation: shake .4s ease;
+}
+.btn-dim { opacity: .25; }
+@keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+
+/* type badge */
+.type-badge {
+  display: inline-block; font-size: .8rem; font-weight: 700;
+  border-radius: 20px; padding: 3px 12px; margin-bottom: 14px;
+}
+.badge-same { background: rgba(168,237,234,.15); color: #a8edea; border: 1px solid rgba(168,237,234,.3); }
+.badge-diff { background: rgba(254,214,227,.15); color: #fed6e3; border: 1px solid rgba(254,214,227,.3); }
+
+/* Game Over */
+.gameover { display: none; text-align: center; }
+.gameover.show { display: block; }
+.go-icon { font-size: 3.5rem; margin-bottom: 10px; display: block; }
+.go-title { font-size: 1.8rem; font-weight: 900; color: #FFD700; }
+.go-stars { font-size: 2.5rem; letter-spacing: 5px; margin: 8px 0; }
+.go-score { font-size: 3rem; font-weight: 900; color: #e94560; }
+.go-msg { color: #aaa; font-size: 1rem; margin-top: 6px; }
+.restart-btn {
+  display: inline-block; margin-top: 18px;
+  background: linear-gradient(135deg, #2ecc71, #27ae60);
+  color: white; border: none; border-radius: 14px;
+  padding: 12px 38px; font-family: 'Tajawal', sans-serif;
+  font-size: 1.1rem; font-weight: 900; cursor: pointer;
+  box-shadow: 0 6px 20px rgba(46,204,113,.3);
+}
+
+@keyframes floatUp {
+  0%   { transform: translateY(0) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(-120px) rotate(360deg); opacity: 0; }
+}
+.particle { position: fixed; font-size: 1.8rem; pointer-events: none; z-index: 200; animation: floatUp 1.2s ease-out forwards; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="title-box">
+    <div style="font-size:2.2rem;margin-bottom:4px">🔍</div>
+    <div class="title">المتشابه والمختلف</div>
+    <div class="sub">اكتشف الفئة المشتركة أو وجه الاختلاف!</div>
+  </div>
+
+  <div class="hud">
+    <div class="hud-item">
+      <div class="hud-label">النقاط</div>
+      <div class="hud-val" id="score" style="color:#FFD700">0</div>
+    </div>
+    <div class="hud-item">
+      <div class="hud-label">الحياة</div>
+      <div class="hud-val" id="lives">❤️❤️❤️</div>
+    </div>
+    <div class="hud-item">
+      <div class="hud-label">السؤال</div>
+      <div class="hud-val" id="qnum" style="color:#a8edea">1</div>
+    </div>
+  </div>
+
+  <div class="prog-wrap"><div class="prog-bar" id="prog" style="width:0%"></div></div>
+
+  <div class="card" id="qcard">
+    <div style="text-align:center" id="badge-wrap"></div>
+    <div class="instruction" id="instruction"></div>
+    <div class="items-row" id="items-row"></div>
+    <div class="hint" id="hint"></div>
+    <div class="btn-row" id="btn-row"></div>
+  </div>
+
+  <div class="card gameover" id="gameover">
+    <span class="go-icon">🏆</span>
+    <div class="go-title">انتهت اللعبة!</div>
+    <div class="go-stars" id="gstars"></div>
+    <div style="color:#aaa">نقاطك النهائية</div>
+    <div class="go-score" id="gscore"></div>
+    <div class="go-msg" id="gmsg"></div>
+    <button class="restart-btn" onclick="restart()">🔄 العب مرة ثانية</button>
+  </div>
+
+</div>
+
+<script>
+// نوع السؤال:
+// type:'same' → ينتميان لنفس الفئة، الخيارات هي الفئات
+// type:'diff' → يختلفان في خاصية، الخيارات هي الخصائص (اللون / الحجم / الشكل)
+
+const SAME_CATS = [
+  { key:'food',    icon:'🍽️', label:'أكل' },
+  { key:'animal',  icon:'🐾', label:'حيوانات' },
+  { key:'clothes', icon:'👗', label:'ملابس' },
+];
+
+const DIFF_PROPS = [
+  { key:'color', icon:'🎨', label:'اللون' },
+  { key:'size',  icon:'📏', label:'الحجم' },
+  { key:'shape', icon:'🔵', label:'الشكل' },
+];
+
+const ALL = [
+  // ── نفس الفئة: أكل ──
+  { type:'same', a:{e:'🍕',n:'بيتزا'},       b:{e:'🍔',n:'برغر'},        answer:'food' },
+  { type:'same', a:{e:'🍎',n:'تفاحة'},       b:{e:'🍊',n:'برتقالة'},     answer:'food' },
+  { type:'same', a:{e:'🍦',n:'آيس كريم'},    b:{e:'🍪',n:'كوكيز'},       answer:'food' },
+  { type:'same', a:{e:'🥕',n:'جزر'},         b:{e:'🌽',n:'ذرة'},         answer:'food' },
+  { type:'same', a:{e:'🍇',n:'عنب'},         b:{e:'🍓',n:'فراولة'},      answer:'food' },
+  // ── نفس الفئة: حيوانات ──
+  { type:'same', a:{e:'🐶',n:'كلب'},         b:{e:'🐱',n:'قطة'},         answer:'animal' },
+  { type:'same', a:{e:'🦁',n:'أسد'},         b:{e:'🐯',n:'نمر'},         answer:'animal' },
+  { type:'same', a:{e:'🐘',n:'فيل'},         b:{e:'🦒',n:'زرافة'},       answer:'animal' },
+  { type:'same', a:{e:'🐧',n:'بطريق'},       b:{e:'🦜',n:'ببغاء'},       answer:'animal' },
+  // ── نفس الفئة: ملابس ──
+  { type:'same', a:{e:'👕',n:'قميص'},        b:{e:'👖',n:'بنطلون'},      answer:'clothes' },
+  { type:'same', a:{e:'🧢',n:'قبعة'},        b:{e:'🎩',n:'برنيطة'},      answer:'clothes' },
+  { type:'same', a:{e:'🧣',n:'وشاح'},        b:{e:'🧤',n:'قفازات'},      answer:'clothes' },
+
+  // ── مختلفان في اللون ──
+  { type:'diff', a:{e:'🍎',n:'تفاحة'},       b:{e:'🍊',n:'برتقالة'},     answer:'color',
+    hint:'التفاحة حمراء والبرتقالة برتقالية' },
+  { type:'diff', a:{e:'🐦',n:'طائر أزرق'},   b:{e:'🐥',n:'كتكوت'},       answer:'color',
+    hint:'الطائر أزرق والكتكوت أصفر' },
+  { type:'diff', a:{e:'🍇',n:'عنب بنفسجي'},  b:{e:'🍋',n:'ليمون'},       answer:'color',
+    hint:'العنب بنفسجي والليمون أصفر' },
+  { type:'diff', a:{e:'🌹',n:'وردة'},        b:{e:'🌻',n:'عباد شمس'},    answer:'color',
+    hint:'الوردة حمراء وعباد الشمس أصفر' },
+  { type:'diff', a:{e:'🐘',n:'فيل'},         b:{e:'🦒',n:'زرافة'},       answer:'color',
+    hint:'الفيل رمادي والزرافة صفراء مع بقع' },
+
+  // ── مختلفان في الحجم ──
+  { type:'diff', a:{e:'🐘',n:'فيل'},         b:{e:'🐭',n:'فأر'},         answer:'size',
+    hint:'الفيل كبير جداً والفأر صغير' },
+  { type:'diff', a:{e:'🌳',n:'شجرة'},        b:{e:'🌱',n:'نبتة صغيرة'},  answer:'size',
+    hint:'الشجرة كبيرة والنبتة صغيرة' },
+  { type:'diff', a:{e:'🚗',n:'سيارة'},       b:{e:'🚌',n:'باص'},         answer:'size',
+    hint:'الباص أكبر من السيارة' },
+  { type:'diff', a:{e:'🍉',n:'بطيخة'},       b:{e:'🍇',n:'عنبة'},        answer:'size',
+    hint:'البطيخة كبيرة والعنبة صغيرة' },
+
+  // ── مختلفان في الشكل ──
+  { type:'diff', a:{e:'🍕',n:'بيتزا'},       b:{e:'🍩',n:'دونات'},       answer:'shape',
+    hint:'البيتزا مثلث الشكل والدونات دائري مع ثقب' },
+  { type:'diff', a:{e:'🎺',n:'بوق'},         b:{e:'🥁',n:'طبلة'},        answer:'shape',
+    hint:'البوق أنبوبي الشكل والطبلة أسطوانية' },
+  { type:'diff', a:{e:'🌙',n:'قمر'},         b:{e:'⭐',n:'نجمة'},        answer:'shape',
+    hint:'القمر هلالي والنجمة ذات أشعة' },
+  { type:'diff', a:{e:'🥚',n:'بيضة'},        b:{e:'🍊',n:'برتقالة'},     answer:'shape',
+    hint:'البيضة بيضاوية الشكل والبرتقالة كروية' },
+];
+
+const sh = a => [...a].sort(() => Math.random() - .5);
+let qs=[], idx=0, score=0, lives=3, answered=false;
+
+function restart() {
+  qs = sh(ALL); idx=0; score=0; lives=3; answered=false;
+  document.getElementById('gameover').classList.remove('show');
+  document.getElementById('qcard').style.display='block';
+  loadQ();
+}
+
+function loadQ() {
+  if (idx >= qs.length || lives <= 0) { showGO(); return; }
+  answered = false;
+  const q = qs[idx];
+
+  // badge
+  const bw = document.getElementById('badge-wrap');
+  bw.innerHTML = q.type==='same'
+    ? '<span class="type-badge badge-same">🔗 ما وجه الشبه؟</span>'
+    : '<span class="type-badge badge-diff">🔍 ما وجه الاختلاف؟</span>';
+
+  // instruction
+  const inst = document.getElementById('instruction');
+  inst.className = 'instruction ' + (q.type==='same' ? 'inst-same' : 'inst-diff');
+  inst.textContent = q.type==='same'
+    ? `${q.a.n} و${q.b.n} ينتميان إلى نفس...`
+    : `${q.a.n} و${q.b.n} يختلفان في...`;
+
+  // items
+  document.getElementById('items-row').innerHTML = `
+    <div class="item-card">
+      <span class="item-emoji">${q.a.e}</span>
+      <span class="item-name">${q.a.n}</span>
+    </div>
+    <div class="vs">↔️</div>
+    <div class="item-card">
+      <span class="item-emoji">${q.b.e}</span>
+      <span class="item-name">${q.b.n}</span>
+    </div>`;
+
+  // hint reset
+  const hint = document.getElementById('hint');
+  hint.style.display='none'; hint.innerHTML='';
+
+  // buttons
+  const row = document.getElementById('btn-row');
+  row.innerHTML='';
+  const opts = q.type==='same' ? sh(SAME_CATS) : sh(DIFF_PROPS);
+  opts.forEach(opt => {
+    const b = document.createElement('button');
+    b.className='ans-btn';
+    b.id='btn-'+opt.key;
+    b.innerHTML=`<span class="btn-icon">${opt.icon}</span><span class="btn-label">${opt.label}</span>`;
+    b.onclick=()=>pick(opt.key);
+    row.appendChild(b);
+  });
+
+  // hud
+  document.getElementById('score').textContent=score;
+  let h=''; for(let i=0;i<3;i++) h+=i<lives?'❤️':'🖤';
+  document.getElementById('lives').innerHTML=h;
+  document.getElementById('qnum').textContent=`${idx+1}/${qs.length}`;
+  document.getElementById('prog').style.width=(idx/qs.length*100)+'%';
+
+  const card=document.getElementById('qcard');
+  card.style.animation='none'; card.offsetHeight; card.style.animation='cardIn .4s ease';
+}
+
+function pick(key) {
+  if (answered) return;
+  answered=true;
+  const q=qs[idx];
+  const correct=key===q.answer;
+  const opts=q.type==='same'?SAME_CATS:DIFF_PROPS;
+
+  opts.forEach(o=>{
+    const el=document.getElementById('btn-'+o.key);
+    if(!el) return;
+    el.disabled=true;
+    if(o.key===q.answer){
+      setTimeout(()=>{el.className='ans-btn btn-correct';},correct?0:300);
+    } else if(o.key===key&&!correct){
+      el.className='ans-btn btn-wrong';
+    } else {
+      el.className='ans-btn btn-dim';
+    }
+  });
+
+  const hint=document.getElementById('hint');
+  hint.style.display='block';
+  const correctOpt=opts.find(o=>o.key===q.answer);
+
+  if(correct){
+    score+=10;
+    hint.style.background='rgba(46,204,113,.12)';
+    hint.style.borderColor='#2ecc71'; hint.style.color='#2ecc71';
+    if(q.type==='same')
+      hint.innerHTML=`✅ صح! كلاهما من فئة ${correctOpt.icon} ${correctOpt.label}`;
+    else
+      hint.innerHTML=`✅ صح! يختلفان في ${correctOpt.icon} ${correctOpt.label}${q.hint?` — ${q.hint}`:''}`;
+    spawnParticles();
+  } else {
+    lives--;
+    hint.style.background='rgba(231,76,60,.12)';
+    hint.style.borderColor='#e74c3c'; hint.style.color='#e74c3c';
+    if(q.type==='same')
+      hint.innerHTML=`❌ غلط! كلاهما من فئة ${correctOpt.icon} ${correctOpt.label}`;
+    else
+      hint.innerHTML=`❌ غلط! يختلفان في ${correctOpt.icon} ${correctOpt.label}${q.hint?` — ${q.hint}`:''}`;
+  }
+
+  document.getElementById('score').textContent=score;
+  let h=''; for(let i=0;i<3;i++) h+=i<lives?'❤️':'🖤';
+  document.getElementById('lives').innerHTML=h;
+
+  setTimeout(()=>{idx++;loadQ();},1600);
+}
+
+function spawnParticles(){
+  ['⭐','✨','🌟','💫','🎉'].forEach((e,i)=>{
+    const p=document.createElement('div');
+    p.className='particle'; p.textContent=e;
+    p.style.left=(20+Math.random()*60)+'%';
+    p.style.top='40%';
+    p.style.animationDelay=(i*100)+'ms';
+    document.body.appendChild(p);
+    setTimeout(()=>p.remove(),1400);
+  });
+}
+
+function showGO(){
+  document.getElementById('qcard').style.display='none';
+  document.getElementById('gameover').classList.add('show');
+  document.getElementById('gscore').textContent=score+' نقطة';
+  const pct=score/(qs.length*10);
+  document.getElementById('gstars').textContent=pct>=.8?'⭐⭐⭐':pct>=.5?'⭐⭐':'⭐';
+  document.getElementById('gmsg').textContent=pct>=.8?'🏆 أداء رائع! أنت نجم!':pct>=.5?'👍 جيد جداً! استمر!':'💪 حاول مرة ثانية!';
+  document.getElementById('prog').style.width='100%';
+}
+
+restart();
+</script>
+</body>
+</html>

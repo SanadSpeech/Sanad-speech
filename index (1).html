@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SoundStar 🐍</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800;900&family=Baloo+2:wght@700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --teal:#2ec4b6; --orange:#ff9f1c; --dark:#0d1b2a;
+  --bg:#f0fafa; --text:#0d1b2a; --muted:#607080;
+  --radius:20px; --shadow:0 8px 32px rgba(46,196,182,0.13);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+#lang-bar{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--dark);display:flex;align-items:center;justify-content:space-between;padding:12px 28px;}
+#lang-bar .logo{color:#fff;font-size:22px;font-weight:900;}
+#lang-bar .logo span{color:var(--teal);}
+.lang-btn{background:rgba(255,255,255,0.1);border:2px solid rgba(255,255,255,0.2);color:#fff;font-size:15px;font-weight:700;padding:8px 22px;border-radius:50px;cursor:pointer;font-family:'Tajawal',sans-serif;}
+.lang-btn:hover{background:var(--teal);border-color:var(--teal);}
+
+#nav-tabs{position:fixed;top:56px;left:0;right:0;z-index:99;background:#fff;border-bottom:3px solid #e8f7f6;display:flex;justify-content:center;gap:8px;padding:10px 20px;box-shadow:0 4px 20px rgba(0,0,0,0.06);}
+.tab-btn{background:transparent;border:2px solid #e0eeee;color:var(--muted);font-size:16px;font-weight:700;padding:10px 26px;border-radius:50px;cursor:pointer;transition:.2s;font-family:'Tajawal',sans-serif;}
+.tab-btn.active{background:var(--teal);border-color:var(--teal);color:#fff;}
+.tab-btn:hover:not(.active){border-color:var(--teal);color:var(--teal);}
+
+main{padding-top:130px;padding-bottom:60px;max-width:960px;margin:0 auto;padding-left:20px;padding-right:20px;}
+.section{display:none;}
+.section.active{display:block;}
+
+/* HERO */
+.hero{text-align:center;padding:50px 20px 40px;background:linear-gradient(135deg,#0d1b2a,#1b3a4b);border-radius:28px;margin-bottom:36px;position:relative;overflow:hidden;}
+.hero::before{content:'🐍';position:absolute;font-size:220px;opacity:0.05;top:50%;left:50%;transform:translate(-50%,-50%);}
+.hero h1{font-size:52px;font-weight:900;color:#fff;margin-bottom:14px;position:relative;}
+.hero h1 span{color:var(--teal);}
+.hero p{font-size:22px;color:rgba(255,255,255,0.7);position:relative;}
+
+/* HOW TO */
+.how-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:36px;}
+.how-card{background:#fff;border-radius:var(--radius);padding:28px 24px;box-shadow:var(--shadow);display:flex;gap:18px;align-items:flex-start;border-top:5px solid var(--teal);}
+.how-num{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--teal),#1a8a80);color:#fff;font-size:24px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.how-card h3{font-size:20px;font-weight:800;margin-bottom:6px;}
+.how-card p{font-size:16px;color:var(--muted);line-height:1.6;}
+
+/* FLASHCARDS */
+.fc-controls{display:flex;justify-content:center;gap:12px;margin-bottom:28px;flex-wrap:wrap;}
+.fc-filter{background:#fff;border:2px solid #ddd;color:var(--muted);font-size:15px;font-weight:700;padding:9px 22px;border-radius:50px;cursor:pointer;transition:.2s;font-family:'Tajawal',sans-serif;}
+.fc-filter.active{background:var(--orange);border-color:var(--orange);color:#fff;}
+.fc-arena{display:flex;flex-direction:column;align-items:center;gap:24px;}
+.flashcard-wrap{perspective:1000px;width:340px;height:240px;cursor:pointer;}
+.flashcard{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .5s ease;}
+.flashcard.flipped{transform:rotateY(180deg);}
+.fc-face{position:absolute;inset:0;border-radius:24px;display:flex;flex-direction:column;align-items:center;justify-content:center;backface-visibility:hidden;padding:20px;}
+.fc-front{background:linear-gradient(135deg,var(--teal),#1a8a80);box-shadow:0 12px 40px rgba(46,196,182,0.3);}
+.fc-front .fc-emoji{font-size:80px;margin-bottom:10px;}
+.fc-front .fc-pos-label{background:rgba(255,255,255,0.2);color:#fff;font-size:13px;font-weight:700;padding:4px 14px;border-radius:50px;}
+.fc-back{background:#fff;transform:rotateY(180deg);box-shadow:0 12px 40px rgba(0,0,0,0.08);border:3px solid var(--teal);}
+.fc-back .fc-word{font-size:36px;font-weight:900;color:var(--dark);margin-bottom:6px;}
+.fc-back .fc-word-ar{font-size:22px;color:var(--teal);font-weight:700;margin-bottom:10px;}
+.fc-back .fc-tip{font-size:14px;color:var(--muted);text-align:center;line-height:1.5;}
+.fc-nav{display:flex;gap:16px;align-items:center;}
+.fc-nav button{background:var(--dark);color:#fff;border:none;font-size:22px;width:52px;height:52px;border-radius:50%;cursor:pointer;}
+.fc-nav button:hover{background:var(--teal);}
+.fc-counter{font-size:18px;font-weight:700;color:var(--muted);min-width:60px;text-align:center;}
+.fc-hint{font-size:14px;color:var(--muted);}
+
+/* GAMES */
+.games-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:36px;}
+.game-card{background:#fff;border-radius:var(--radius);padding:30px 24px;box-shadow:var(--shadow);text-align:center;cursor:pointer;transition:.25s;border:3px solid transparent;}
+.game-card:hover{border-color:var(--teal);transform:translateY(-4px);}
+.game-card .gi{font-size:64px;margin-bottom:14px;}
+.game-card h3{font-size:22px;font-weight:800;margin-bottom:8px;}
+.game-card p{font-size:15px;color:var(--muted);line-height:1.5;}
+.play-btn{margin-top:18px;background:var(--teal);color:#fff;border:none;font-size:16px;font-weight:700;padding:12px 28px;border-radius:50px;cursor:pointer;font-family:'Tajawal',sans-serif;}
+
+#game-sort,#game-memory,#game-whichone{display:none;}
+#game-sort.open,#game-memory.open,#game-whichone.open{display:block;}
+.game-header{display:flex;align-items:center;gap:14px;margin-bottom:28px;}
+.back-btn{background:var(--dark);color:#fff;border:none;font-size:14px;font-weight:700;padding:10px 20px;border-radius:50px;cursor:pointer;font-family:'Tajawal',sans-serif;}
+.game-header h2{font-size:28px;font-weight:900;}
+.score-bar{background:#fff;border-radius:50px;padding:10px 24px;display:inline-flex;gap:24px;box-shadow:var(--shadow);margin-bottom:24px;font-weight:700;font-size:16px;}
+
+/* Sort */
+.sort-word-display{text-align:center;font-size:52px;font-weight:900;background:#fff;border-radius:var(--radius);padding:30px;box-shadow:var(--shadow);margin-bottom:28px;border-top:6px solid var(--teal);}
+.sort-word-display .emoji{font-size:70px;display:block;margin-bottom:10px;}
+.sort-choices{display:flex;justify-content:center;gap:16px;flex-wrap:wrap;}
+.sort-choice{background:#fff;border:3px solid #e0eeee;border-radius:16px;padding:18px 30px;font-size:18px;font-weight:700;cursor:pointer;transition:.2s;font-family:'Tajawal',sans-serif;}
+.sort-choice:hover{border-color:var(--teal);color:var(--teal);}
+.sort-choice.correct{background:#e6faf8;border-color:var(--teal);color:var(--teal);}
+.sort-choice.wrong{background:#ffeaea;border-color:#ff6b6b;color:#ff6b6b;}
+
+/* Memory */
+.memory-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+.mem-card{aspect-ratio:1;border-radius:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:32px;background:var(--dark);border:3px solid rgba(255,255,255,0.1);transition:.3s;user-select:none;}
+.mem-card.revealed{background:#fff;border-color:var(--teal);}
+.mem-card.matched{background:#e6faf8;border-color:var(--teal);opacity:0.7;pointer-events:none;}
+
+/* Which one */
+.wo-question{text-align:center;font-size:26px;font-weight:800;margin-bottom:30px;}
+.wo-options{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.wo-option{background:#fff;border:3px solid #e0eeee;border-radius:var(--radius);padding:28px 20px;text-align:center;cursor:pointer;transition:.2s;font-family:'Tajawal',sans-serif;}
+.wo-option:hover{border-color:var(--teal);}
+.wo-option .wo-emoji{font-size:64px;display:block;margin-bottom:10px;}
+.wo-option .wo-word{font-size:22px;font-weight:800;}
+.wo-option.correct{background:#e6faf8;border-color:var(--teal);}
+.wo-option.wrong{background:#ffeaea;border-color:#ff6b6b;}
+
+.result-msg{text-align:center;font-size:24px;font-weight:800;padding:18px;border-radius:16px;margin-top:20px;display:none;}
+.result-msg.show{display:block;}
+.result-msg.ok{background:#e6faf8;color:#1a8a80;}
+.result-msg.no{background:#ffeaea;color:#cc3333;}
+.next-btn{display:block;margin:20px auto 0;background:var(--teal);color:#fff;border:none;font-size:18px;font-weight:700;padding:14px 40px;border-radius:50px;cursor:pointer;font-family:'Tajawal',sans-serif;}
+
+@media(max-width:620px){
+  .how-grid,.games-grid{grid-template-columns:1fr;}
+  .hero h1{font-size:36px;}
+  .memory-grid{grid-template-columns:repeat(3,1fr);}
+  .wo-options{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<div id="lang-bar">
+  <div class="logo">Sound<span>Star</span> 🐍</div>
+  <button class="lang-btn" onclick="toggleLang()">English / عربي</button>
+</div>
+
+<div id="nav-tabs">
+  <button class="tab-btn active" onclick="showTab('home')" id="tab-home">الرئيسية</button>
+  <button class="tab-btn" onclick="showTab('flashcards')" id="tab-flashcards">البطاقات 🃏</button>
+  <button class="tab-btn" onclick="showTab('games')" id="tab-games">الألعاب 🎮</button>
+</div>
+
+<main>
+
+<!-- HOME -->
+<div class="section active" id="sec-home">
+  <div class="hero">
+    <h1>تدريب صوت <span>S</span> 🐍</h1>
+    <p>بطاقات + ألعاب تفاعلية لتعليم النطق الصحيح</p>
+  </div>
+  <div class="how-grid">
+    <div class="how-card"><div class="how-num">١</div><div><h3 class="t" data-ar="الابتسامة" data-en="Smile">الابتسامة</h3><p class="t" data-ar="شد شفايفك للجنبين والأسنان قريبة من بعض" data-en="Spread your lips and keep teeth close together">شد شفايفك للجنبين والأسنان قريبة من بعض</p></div></div>
+    <div class="how-card"><div class="how-num">٢</div><div><h3 class="t" data-ar="موضع اللسان" data-en="Tongue Position">موضع اللسان</h3><p class="t" data-ar="طرف اللسان قريب من النتوء خلف الأسنان — بس ما يلمسه!" data-en="Tongue tip close to the ridge — but don't touch it!">طرف اللسان قريب من النتوء خلف الأسنان — بس ما يلمسه!</p></div></div>
+    <div class="how-card"><div class="how-num">٣</div><div><h3 class="t" data-ar="النفخ الهادئ" data-en="Steady Airflow">النفخ الهادئ</h3><p class="t" data-ar="انفخ هواء بهدوء مثل الأفعى 🌬️" data-en="Blow a steady stream of air 🌬️">انفخ هواء بهدوء مثل الأفعى 🌬️</p></div></div>
+    <div class="how-card"><div class="how-num">٤</div><div><h3 class="t" data-ar="بدون رنين" data-en="No Voice">بدون رنين</h3><p class="t" data-ar="حط يدك على رقبتك — ما يكون في اهتزاز!" data-en="Hand on throat — no vibration! S is voiceless">حط يدك على رقبتك — ما يكون في اهتزاز!</p></div></div>
+  </div>
+</div>
+
+<!-- FLASHCARDS -->
+<div class="section" id="sec-flashcards">
+  <div class="fc-controls">
+    <button class="fc-filter active" onclick="setFilter('initial',this)" class="t" data-ar="بداية الكلمة" data-en="Initial S">بداية الكلمة</button>
+    <button class="fc-filter" onclick="setFilter('medial',this)" data-ar="وسط الكلمة" data-en="Medial S">وسط الكلمة</button>
+    <button class="fc-filter" onclick="setFilter('final',this)" data-ar="نهاية الكلمة" data-en="Final S">نهاية الكلمة</button>
+  </div>
+  <div class="fc-arena">
+    <div class="flashcard-wrap" onclick="flipCard()">
+      <div class="flashcard" id="flashcard">
+        <div class="fc-face fc-front">
+          <div class="fc-emoji" id="fc-emoji">🐍</div>
+          <div class="fc-pos-label" id="fc-pos-label">Initial S</div>
+        </div>
+        <div class="fc-face fc-back">
+          <div class="fc-word" id="fc-word">Snake</div>
+          <div class="fc-word-ar" id="fc-word-ar">أفعى</div>
+          <div class="fc-tip" id="fc-tip">S at the beginning!</div>
+        </div>
+      </div>
+    </div>
+    <p class="fc-hint t" data-ar="اضغط على البطاقة لترى الكلمة!" data-en="Tap the card to reveal the word!">اضغط على البطاقة لترى الكلمة!</p>
+    <div class="fc-nav">
+      <button onclick="prevCard()">→</button>
+      <div class="fc-counter" id="fc-counter">1 / 6</div>
+      <button onclick="nextCard()">←</button>
+    </div>
+  </div>
+</div>
+
+<!-- GAMES -->
+<div class="section" id="sec-games">
+  <div id="game-menu">
+    <div class="games-grid">
+      <div class="game-card">
+        <div class="gi">🗂️</div>
+        <h3 class="t" data-ar="صنّف الكلمة" data-en="Sort the Word">صنّف الكلمة</h3>
+        <p class="t" data-ar="وين يجي صوت S؟ في البداية، الوسط، أو النهاية؟" data-en="Where is the S? Beginning, middle, or end?">وين يجي صوت S؟ في البداية، الوسط، أو النهاية؟</p>
+        <button class="play-btn t" onclick="startSort()" data-ar="العب الآن" data-en="Play Now">العب الآن</button>
+      </div>
+      <div class="game-card">
+        <div class="gi">🧠</div>
+        <h3 class="t" data-ar="لعبة الذاكرة" data-en="Memory Match">لعبة الذاكرة</h3>
+        <p class="t" data-ar="طابق الصورة مع الكلمة الصحيحة" data-en="Match the picture with the correct word">طابق الصورة مع الكلمة الصحيحة</p>
+        <button class="play-btn t" onclick="startMemory()" data-ar="العب الآن" data-en="Play Now">العب الآن</button>
+      </div>
+      <div class="game-card">
+        <div class="gi">👆</div>
+        <h3 class="t" data-ar="أيّها يبدأ بـ S؟" data-en="Which Starts with S?">أيّها يبدأ بـ S؟</h3>
+        <p class="t" data-ar="اختر الصورة الصحيحة التي تبدأ بصوت S" data-en="Choose the picture that starts with the S sound">اختر الصورة الصحيحة التي تبدأ بصوت S</p>
+        <button class="play-btn t" onclick="startWhichOne()" data-ar="العب الآن" data-en="Play Now">العب الآن</button>
+      </div>
+      <div class="game-card" style="opacity:.5;pointer-events:none;">
+        <div class="gi">🎯</div>
+        <h3 class="t" data-ar="قريباً..." data-en="Coming Soon...">قريباً...</h3>
+        <p class="t" data-ar="ألعاب أكثر قيد التطوير!" data-en="More games coming soon!">ألعاب أكثر قيد التطوير!</p>
+        <button class="play-btn">🔒</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sort -->
+  <div id="game-sort">
+    <div class="game-header">
+      <button class="back-btn t" onclick="backToMenu()" data-ar="← رجوع" data-en="← Back">← رجوع</button>
+      <h2 class="t" data-ar="🗂️ صنّف الكلمة" data-en="🗂️ Sort the Word">🗂️ صنّف الكلمة</h2>
+    </div>
+    <div class="score-bar">
+      <span class="t" data-ar="النقاط: " data-en="Score: ">النقاط: </span><b id="sort-score">0</b>
+      &nbsp;|&nbsp;
+      <span class="t" data-ar="السؤال: " data-en="Q: ">السؤال: </span><b id="sort-q">1</b>/8
+    </div>
+    <div class="sort-word-display">
+      <span class="emoji" id="sort-emoji">🐍</span>
+      <div id="sort-word">Snake</div>
+    </div>
+    <div class="sort-choices">
+      <button class="sort-choice t" onclick="sortAnswer('initial')" data-ar="بداية الكلمة" data-en="Beginning">بداية الكلمة</button>
+      <button class="sort-choice t" onclick="sortAnswer('medial')" data-ar="وسط الكلمة" data-en="Middle">وسط الكلمة</button>
+      <button class="sort-choice t" onclick="sortAnswer('final')" data-ar="نهاية الكلمة" data-en="End">نهاية الكلمة</button>
+    </div>
+    <div class="result-msg" id="sort-result"></div>
+    <button class="next-btn t" id="sort-next" style="display:none" onclick="nextSort()" data-ar="التالي →" data-en="Next →">التالي →</button>
+  </div>
+
+  <!-- Memory -->
+  <div id="game-memory">
+    <div class="game-header">
+      <button class="back-btn t" onclick="backToMenu()" data-ar="← رجوع" data-en="← Back">← رجوع</button>
+      <h2 class="t" data-ar="🧠 لعبة الذاكرة" data-en="🧠 Memory Match">🧠 لعبة الذاكرة</h2>
+    </div>
+    <div class="score-bar">
+      <span class="t" data-ar="أزواج: " data-en="Pairs: ">أزواج: </span><b id="mem-pairs">0</b>/4
+      &nbsp;|&nbsp;
+      <span class="t" data-ar="محاولات: " data-en="Tries: ">محاولات: </span><b id="mem-tries">0</b>
+    </div>
+    <div class="memory-grid" id="mem-grid"></div>
+    <div class="result-msg" id="mem-result"></div>
+  </div>
+
+  <!-- Which One -->
+  <div id="game-whichone">
+    <div class="game-header">
+      <button class="back-btn t" onclick="backToMenu()" data-ar="← رجوع" data-en="← Back">← رجوع</button>
+      <h2 class="t" data-ar="👆 أيّها يبدأ بـ S؟" data-en="👆 Which Starts with S?">👆 أيّها يبدأ بـ S؟</h2>
+    </div>
+    <div class="score-bar">
+      <span class="t" data-ar="النقاط: " data-en="Score: ">النقاط: </span><b id="wo-score">0</b>
+      &nbsp;|&nbsp;
+      <span class="t" data-ar="السؤال: " data-en="Q: ">السؤال: </span><b id="wo-q">1</b>/6
+    </div>
+    <div class="wo-question t" id="wo-question" data-ar="أيّها يبدأ بصوت S؟ 🐍" data-en="Which one starts with the S sound? 🐍">أيّها يبدأ بصوت S؟ 🐍</div>
+    <div class="wo-options" id="wo-options"></div>
+    <div class="result-msg" id="wo-result"></div>
+    <button class="next-btn t" id="wo-next" style="display:none" onclick="nextWO()" data-ar="التالي →" data-en="Next →">التالي →</button>
+  </div>
+</div>
+
+</main>
+<script>
+const cards={
+  initial:[
+    {emoji:'🐟',en:'Fish',ar:'سَمَكة'},
+    {emoji:'⌚',en:'Watch',ar:'سَاعة'},
+    {emoji:'🚗',en:'Car',ar:'سَيَّارة'},
+    {emoji:'🧺',en:'Basket',ar:'سَلَّة'},
+    {emoji:'🔪',en:'Knife',ar:'سِكِّين'},
+    {emoji:'☁️',en:'Sky',ar:'سَمَاء'},
+  ],
+  medial:[
+    {emoji:'🦁',en:'Lion',ar:'أَسَد'},
+    {emoji:'👅',en:'Tongue',ar:'لِسَان'},
+    {emoji:'📐',en:'Ruler',ar:'مِسْطَرة'},
+    {emoji:'💊',en:'Medicine',ar:'دَوَاسة'},
+    {emoji:'🌿',en:'Jasmine',ar:'يَاسَمِين'},
+    {emoji:'🏷️',en:'Price',ar:'مُسَعَّر'},
+  ],
+  final:[
+    {emoji:'🚌',en:'Bus',ar:'بَاص'},
+    {emoji:'🪔',en:'Lantern',ar:'فَانُوس'},
+    {emoji:'🥛',en:'Glass',ar:'كَاس'},
+    {emoji:'👑',en:'Crown',ar:'طَاوُوس'},
+    {emoji:'🎠',en:'Carousel',ar:'قَفَص'},
+    {emoji:'📦',en:'Box',ar:'مَحْبَس'},
+  ]
+};
+const sortWords=[
+  {emoji:'🐟',en:'Fish',ar:'سَمَكة',pos:'initial'},
+  {emoji:'⌚',en:'Watch',ar:'سَاعة',pos:'initial'},
+  {emoji:'🚌',en:'Bus',ar:'بَاص',pos:'final'},
+  {emoji:'🪔',en:'Lantern',ar:'فَانُوس',pos:'final'},
+  {emoji:'🦁',en:'Lion',ar:'أَسَد',pos:'medial'},
+  {emoji:'👅',en:'Tongue',ar:'لِسَان',pos:'medial'},
+  {emoji:'🚗',en:'Car',ar:'سَيَّارة',pos:'initial'},
+  {emoji:'🥛',en:'Glass',ar:'كَاس',pos:'final'},
+];
+const woRounds=[
+  {correct:{emoji:'🐟',word:'Fish',wordAr:'سَمَكة'},wrong:{emoji:'🐱',word:'Cat',wordAr:'قِطَّة'}},
+  {correct:{emoji:'⌚',word:'Watch',wordAr:'سَاعة'},wrong:{emoji:'📱',word:'Phone',wordAr:'هَاتِف'}},
+  {correct:{emoji:'🚗',word:'Car',wordAr:'سَيَّارة'},wrong:{emoji:'✈️',word:'Plane',wordAr:'طَيَّارة'}},
+  {correct:{emoji:'🧺',word:'Basket',wordAr:'سَلَّة'},wrong:{emoji:'👜',word:'Bag',wordAr:'شَنْطة'}},
+  {correct:{emoji:'🦁',word:'Lion',wordAr:'أَسَد'},wrong:{emoji:'🐘',word:'Elephant',wordAr:'فِيل'}},
+  {correct:{emoji:'🪔',word:'Lantern',wordAr:'فَانُوس'},wrong:{emoji:'💡',word:'Bulb',wordAr:'لَمْبة'}},
+];
+const memPairs=[
+  {emoji:'🐟',word:'Fish',wordAr:'سَمَكة'},
+  {emoji:'⌚',word:'Watch',wordAr:'سَاعة'},
+  {emoji:'🚗',word:'Car',wordAr:'سَيَّارة'},
+  {emoji:'🧺',word:'Basket',wordAr:'سَلَّة'},
+];
+
+let lang='ar';
+function toggleLang(){
+  lang=lang==='ar'?'en':'ar';
+  document.documentElement.lang=lang;
+  document.documentElement.dir=lang==='ar'?'rtl':'ltr';
+  document.querySelectorAll('.t').forEach(el=>{
+    if(el.dataset.ar) el.innerHTML=lang==='ar'?el.dataset.ar:el.dataset.en;
+  });
+  document.getElementById('tab-home').textContent=lang==='ar'?'الرئيسية':'Home';
+  document.getElementById('tab-flashcards').textContent=lang==='ar'?'البطاقات 🃏':'Flashcards 🃏';
+  document.getElementById('tab-games').textContent=lang==='ar'?'الألعاب 🎮':'Games 🎮';
+  renderCard();
+  if(document.getElementById('game-sort').classList.contains('open')) renderSort();
+  if(document.getElementById('game-whichone').classList.contains('open')) renderWO();
+}
+
+function showTab(tab){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('sec-'+tab).classList.add('active');
+  document.getElementById('tab-'+tab).classList.add('active');
+  backToMenu();
+}
+
+// FLASHCARDS
+let currentFilter='initial',currentIndex=0;
+function setFilter(f,btn){
+  currentFilter=f; currentIndex=0;
+  document.querySelectorAll('.fc-filter').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('flashcard').classList.remove('flipped');
+  renderCard();
+}
+function renderCard(){
+  const list=cards[currentFilter],c=list[currentIndex];
+  document.getElementById('fc-emoji').textContent=c.emoji;
+  document.getElementById('fc-word').textContent=c.en;
+  document.getElementById('fc-word-ar').textContent=c.ar;
+  const posMap={initial:lang==='ar'?'بداية الكلمة':'Initial S',medial:lang==='ar'?'وسط الكلمة':'Medial S',final:lang==='ar'?'نهاية الكلمة':'Final S'};
+  document.getElementById('fc-pos-label').textContent=posMap[currentFilter];
+  document.getElementById('fc-tip').textContent=posMap[currentFilter];
+  document.getElementById('fc-counter').textContent=(currentIndex+1)+' / '+list.length;
+  document.getElementById('flashcard').classList.remove('flipped');
+}
+function flipCard(){document.getElementById('flashcard').classList.toggle('flipped');}
+function nextCard(){currentIndex=(currentIndex+1)%cards[currentFilter].length;renderCard();}
+function prevCard(){currentIndex=(currentIndex-1+cards[currentFilter].length)%cards[currentFilter].length;renderCard();}
+
+// SORT GAME
+let sortIdx=0,sortScore=0,sortShuffled=[];
+function startSort(){
+  sortIdx=0;sortScore=0;
+  sortShuffled=[...sortWords].sort(()=>Math.random()-.5);
+  document.getElementById('game-menu').style.display='none';
+  document.getElementById('game-sort').classList.add('open');
+  renderSort();
+}
+function renderSort(){
+  const w=sortShuffled[sortIdx];
+  document.getElementById('sort-emoji').textContent=w.emoji;
+  document.getElementById('sort-word').textContent=lang==='ar'?w.ar:w.en;
+  document.getElementById('sort-score').textContent=sortScore;
+  document.getElementById('sort-q').textContent=sortIdx+1;
+  document.querySelectorAll('.sort-choice').forEach(b=>{b.classList.remove('correct','wrong');b.disabled=false;});
+  document.getElementById('sort-result').classList.remove('show','ok','no');
+  document.getElementById('sort-next').style.display='none';
+}
+function sortAnswer(pos){
+  const w=sortShuffled[sortIdx],correct=pos===w.pos;
+  if(correct) sortScore++;
+  document.querySelectorAll('.sort-choice').forEach(b=>{
+    const p=b.getAttribute('onclick').match(/'(\w+)'/)[1];
+    if(p===w.pos) b.classList.add('correct');
+    else if(p===pos&&!correct) b.classList.add('wrong');
+    b.disabled=true;
+  });
+  const msg=document.getElementById('sort-result');
+  if(sortIdx===sortShuffled.length-1){
+    msg.textContent=(lang==='ar'?'🏆 انتهت اللعبة! نقاطك: ':'🏆 Game over! Score: ')+sortScore+'/'+sortShuffled.length;
+    msg.className='result-msg show ok';
+  } else {
+    msg.textContent=correct?(lang==='ar'?'🎉 ممتاز!':'🎉 Correct!'):(lang==='ar'?'❌ حاول مرة ثانية!':'❌ Try again!');
+    msg.className='result-msg show '+(correct?'ok':'no');
+    document.getElementById('sort-next').style.display='block';
+  }
+}
+function nextSort(){sortIdx++;renderSort();}
+
+// MEMORY GAME
+let memRevealed=[],memMatched=[],memTries=0,memPairs2=0,memCards=[];
+function startMemory(){
+  memRevealed=[];memMatched=[];memTries=0;memPairs2=0;
+  document.getElementById('game-menu').style.display='none';
+  document.getElementById('game-memory').classList.add('open');
+  document.getElementById('mem-pairs').textContent=0;
+  document.getElementById('mem-tries').textContent=0;
+  document.getElementById('mem-result').classList.remove('show');
+  const items=[];
+  memPairs.forEach((p,i)=>{
+    items.push({id:i*2,pair:i,type:'emoji',content:p.emoji});
+    items.push({id:i*2+1,pair:i,type:'word',content:lang==='ar'?p.wordAr:p.word});
+  });
+  memCards=items.sort(()=>Math.random()-.5);
+  const grid=document.getElementById('mem-grid');
+  grid.innerHTML='';
+  memCards.forEach((c,idx)=>{
+    const div=document.createElement('div');
+    div.className='mem-card';
+    div.dataset.idx=idx;
+    div.textContent='?';
+    div.onclick=()=>revealMem(idx);
+    grid.appendChild(div);
+  });
+}
+function revealMem(idx){
+  if(memRevealed.length===2||memMatched.includes(memCards[idx].pair)||memRevealed.includes(idx)) return;
+  memRevealed.push(idx);
+  const el=document.querySelector('.mem-card[data-idx="'+idx+'"]');
+  el.textContent=memCards[idx].content;
+  el.classList.add('revealed');
+  if(memRevealed.length===2){
+    memTries++;
+    document.getElementById('mem-tries').textContent=memTries;
+    const[a,b]=memRevealed;
+    if(memCards[a].pair===memCards[b].pair&&memCards[a].type!==memCards[b].type){
+      memMatched.push(memCards[a].pair);
+      memPairs2++;
+      document.getElementById('mem-pairs').textContent=memPairs2;
+      document.querySelectorAll('.mem-card[data-idx="'+a+'"],.mem-card[data-idx="'+b+'"]').forEach(e=>{e.classList.remove('revealed');e.classList.add('matched');});
+      memRevealed=[];
+      if(memPairs2===memPairs.length){
+        const msg=document.getElementById('mem-result');
+        msg.textContent=lang==='ar'?'🏆 أحسنت! أتممت اللعبة!':'🏆 Great job! You matched them all!';
+        msg.className='result-msg show ok';
+      }
+    } else {
+      setTimeout(()=>{
+        document.querySelectorAll('.mem-card[data-idx="'+a+'"],.mem-card[data-idx="'+b+'"]').forEach(e=>{e.textContent='?';e.classList.remove('revealed');});
+        memRevealed=[];
+      },900);
+    }
+  }
+}
+
+// WHICH ONE
+let woIdx=0,woScore=0,woShuffled=[];
+function startWhichOne(){
+  woIdx=0;woScore=0;
+  woShuffled=[...woRounds].sort(()=>Math.random()-.5);
+  document.getElementById('game-menu').style.display='none';
+  document.getElementById('game-whichone').classList.add('open');
+  renderWO();
+}
+function renderWO(){
+  const r=woShuffled[woIdx];
+  document.getElementById('wo-score').textContent=woScore;
+  document.getElementById('wo-q').textContent=woIdx+1;
+  document.getElementById('wo-result').classList.remove('show','ok','no');
+  document.getElementById('wo-next').style.display='none';
+  const opts=document.getElementById('wo-options');
+  opts.innerHTML='';
+  const items=[{...r.correct,isCorrect:true},{...r.wrong,isCorrect:false}].sort(()=>Math.random()-.5);
+  items.forEach(item=>{
+    const div=document.createElement('div');
+    div.className='wo-option';
+    div.innerHTML='<span class="wo-emoji">'+item.emoji+'</span><div class="wo-word">'+(lang==='ar'?item.wordAr:item.word)+'</div>';
+    div.onclick=()=>pickWO(div,item.isCorrect);
+    opts.appendChild(div);
+  });
+}
+function pickWO(el,correct){
+  if(document.querySelectorAll('.wo-option.correct,.wo-option.wrong').length) return;
+  if(correct){el.classList.add('correct');woScore++;}
+  else{
+    el.classList.add('wrong');
+    document.querySelectorAll('.wo-option').forEach(o=>{if(!o.classList.contains('wrong')) o.classList.add('correct');});
+  }
+  const msg=document.getElementById('wo-result');
+  if(woIdx===woShuffled.length-1){
+    msg.textContent=(lang==='ar'?'🏆 انتهت اللعبة! نقاطك: ':'🏆 Game over! Score: ')+woScore+'/'+woShuffled.length;
+    msg.className='result-msg show ok';
+  } else {
+    msg.textContent=correct?(lang==='ar'?'🎉 صح!':'🎉 Correct!'):(lang==='ar'?'❌ حاول مرة ثانية!':'❌ Try again!');
+    msg.className='result-msg show '+(correct?'ok':'no');
+    document.getElementById('wo-next').style.display='block';
+  }
+}
+function nextWO(){woIdx++;renderWO();}
+
+function backToMenu(){
+  document.getElementById('game-menu').style.display='';
+  document.getElementById('game-sort').classList.remove('open');
+  document.getElementById('game-memory').classList.remove('open');
+  document.getElementById('game-whichone').classList.remove('open');
+}
+
+renderCard();
+</script>
+</body>
+</html>

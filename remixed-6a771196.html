@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مستويات بلانكس – صورة الملعب</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Tajawal',sans-serif;background:#f0f4f8;min-height:100vh}
+
+.header{background:linear-gradient(135deg,#1a237e,#3949ab);color:white;padding:18px 24px;text-align:center}
+.header h1{font-size:1.7rem;font-weight:900}
+.header p{font-size:.9rem;opacity:.8;margin-top:4px}
+
+.main{max-width:1000px;margin:0 auto;padding:20px}
+
+.img-card{background:white;border-radius:20px;box-shadow:0 4px 20px rgba(0,0,0,.12);padding:16px;margin-bottom:24px}
+.img-title{text-align:center;font-size:1rem;font-weight:900;color:#1a237e;margin-bottom:12px}
+.img-wrap{border-radius:14px;overflow:hidden;border:3px solid #e8eaf6}
+.img-wrap img{width:100%;display:block;object-fit:cover}
+
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;justify-content:center}
+.tab-btn{padding:10px 20px;border:none;border-radius:50px;font-family:'Tajawal',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;transition:all .2s;opacity:.55}
+.tab-btn.active{opacity:1;transform:scale(1.05);box-shadow:0 4px 14px rgba(0,0,0,.2)}
+.t1{background:#e3f2fd;color:#0d47a1}.t1.active{background:#0d47a1;color:white}
+.t2{background:#e8f5e9;color:#1b5e20}.t2.active{background:#1b5e20;color:white}
+.t3{background:#fff3e0;color:#e65100}.t3.active{background:#e65100;color:white}
+.t4{background:#fce4ec;color:#880e4f}.t4.active{background:#880e4f;color:white}
+
+.panel{display:none;animation:fadeIn .3s ease}
+.panel.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.level-badge{display:flex;align-items:center;gap:10px;padding:13px 18px;border-radius:14px;color:white;font-size:1.1rem;font-weight:900;margin-bottom:16px}
+.l1-bg{background:linear-gradient(135deg,#0d47a1,#42a5f5)}
+.l2-bg{background:linear-gradient(135deg,#1b5e20,#66bb6a)}
+.l3-bg{background:linear-gradient(135deg,#e65100,#ffa726)}
+.l4-bg{background:linear-gradient(135deg,#880e4f,#e91e63)}
+
+.questions{display:flex;flex-direction:column;gap:12px}
+.q-card{background:white;border-radius:14px;padding:14px 16px;box-shadow:0 2px 8px rgba(0,0,0,.06);display:flex;align-items:flex-start;gap:12px;transition:box-shadow .2s}
+.q-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.12)}
+.q-num{min-width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.95rem;color:white;flex-shrink:0}
+.n1{background:#0d47a1}.n2{background:#1b5e20}.n3{background:#e65100}.n4{background:#880e4f}
+.q-body{flex:1}
+.q-text{font-size:1.05rem;font-weight:700;color:#222;line-height:1.7;margin-bottom:8px}
+.q-hint{display:inline-block;background:#fff8e1;border:1px solid #ffe082;border-radius:8px;padding:3px 10px;font-size:.85rem;color:#795548;margin-bottom:8px}
+.answer-box{width:100%;border:2px dashed #ddd;border-radius:10px;padding:9px 13px;font-family:'Tajawal',sans-serif;font-size:1rem;color:#333;resize:none;min-height:42px;outline:none;transition:border-color .2s;background:#fafafa}
+.answer-box:focus{border-color:#90caf9;background:white}
+.l2 .answer-box:focus{border-color:#a5d6a7}
+.l3 .answer-box:focus{border-color:#ffcc80}
+.l4 .answer-box:focus{border-color:#f48fb1}
+
+.actions{display:flex;justify-content:center;gap:12px;margin-top:28px;flex-wrap:wrap;padding-bottom:30px}
+.btn{padding:12px 30px;border:none;border-radius:50px;font-family:'Tajawal',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;transition:all .2s}
+.btn-print{background:#1a237e;color:white}.btn-print:hover{background:#283593;transform:scale(1.03)}
+.btn-clear{background:#eceff1;color:#546e7a}.btn-clear:hover{background:#cfd8dc}
+
+@media print{
+  .tabs,.actions{display:none}
+  .panel{display:block!important;margin-bottom:30px;page-break-after:always}
+  .q-card{break-inside:avoid}
+  body,.main{background:white;padding:0}
+  .header{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🏫 مستويات بلانكس للغة</h1>
+  <p>صورة الملعب – المستويات 1 إلى 4</p>
+</div>
+
+<div class="main">
+
+  <div class="img-card">
+    <div class="img-title">🖼️ انظر إلى الصورة جيداً ثم أجب على الأسئلة</div>
+    <div class="img-wrap">
+      <div id="uploadPrompt" style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px;background:#f5f5f5;gap:14px">
+        <div style="font-size:3rem">🖼️</div>
+        <div style="font-weight:700;color:#555;font-size:1.1rem">اضغط لإضافة صورة الملعب</div>
+        <label style="background:#1a237e;color:white;padding:10px 24px;border-radius:50px;cursor:pointer;font-weight:700;font-size:1rem">
+          📂 اختر الصورة
+          <input type="file" accept="image/*" style="display:none" onchange="loadImg(this)">
+        </label>
+      </div>
+      <img id="playgroundImg" alt="صورة الملعب" style="width:100%;display:none;border-radius:11px"/>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn t1 active" onclick="show(1)">🔵 المستوى 1 – التذكّر</button>
+    <button class="tab-btn t2"        onclick="show(2)">🟢 المستوى 2 – الفهم</button>
+    <button class="tab-btn t3"        onclick="show(3)">🟠 المستوى 3 – التطبيق</button>
+    <button class="tab-btn t4"        onclick="show(4)">🔴 المستوى 4 – التحليل</button>
+  </div>
+
+  <div id="p1" class="panel active">
+    <div class="level-badge l1-bg">🔵 المستوى الأول – التذكّر (Recall)</div>
+    <div class="questions" id="q1"></div>
+  </div>
+  <div id="p2" class="panel l2">
+    <div class="level-badge l2-bg">🟢 المستوى الثاني – الفهم (Comprehension)</div>
+    <div class="questions" id="q2"></div>
+  </div>
+  <div id="p3" class="panel l3">
+    <div class="level-badge l3-bg">🟠 المستوى الثالث – التطبيق (Application)</div>
+    <div class="questions" id="q3"></div>
+  </div>
+  <div id="p4" class="panel l4">
+    <div class="level-badge l4-bg">🔴 المستوى الرابع – التحليل / التركيب (Analysis)</div>
+    <div class="questions" id="q4"></div>
+  </div>
+
+  <div class="actions">
+    <button class="btn btn-print" onclick="window.print()">🖨️ طباعة</button>
+    <button class="btn btn-clear" onclick="clearAll()">🗑️ مسح الإجابات</button>
+  </div>
+
+</div>
+
+<script>
+const data={
+  1:[
+    {q:"ماذا ترى؟",hint:"أشر إلى الزحليقة"},
+    {q:"ما هذا؟",hint:"أشر إلى حبل القفز"},
+    {q:"أشر إلى الشجرة."},
+    {q:"أرني الزحليقة."},
+    {q:"ماذا ترى؟",hint:"أشر إلى كرة القدم"},
+    {q:"ابحث عن شيء آخر مثل هذا.",hint:"أشر إلى سحابة"},
+    {q:"أشر إلى الممر / الطريق."},
+    {q:"ابحث عن شيء آخر مثل هذا.",hint:"أشر إلى علبة طعام أحد الأطفال"},
+    {q:"ماذا ترى؟",hint:"أشر إلى الزهرة – زهر النرجس مقبول أيضاً"},
+    {q:"أرني الفراشة."},
+  ],
+  2:[
+    {q:"ماذا تفعل البنت؟",hint:"أشر إلى البنت التي تقفز بالحبل"},
+    {q:"ماذا يفعل الولد؟",hint:"أشر إلى الولد الذي يراقب الفراشة"},
+    {q:"ما النمط على القميص؟",hint:"أشر إلى البنت التي ترتدي القميص المخطط"},
+    {q:"أشر إلى الزحليقة الحمراء."},
+    {q:"هل يمكنك إيجاد الزهرة الكبيرة؟"},
+    {q:"هل يمكنك إيجاد الزهرة البنفسجية / الأرجوانية؟"},
+    {q:"الفراشة تطير في السماء. هل يمكنك تسمية شيء آخر يطير في السماء؟"},
+    {q:"أخبرني بشيء واحد يرتديه الولد.",hint:"أشر إلى الولد الذي يركل الكرة"},
+    {q:"هل يمكنك الإشارة إلى زهرة صغيرة؟"},
+    {q:"ماذا يحدث في هذه الصورة؟"},
+  ],
+  3:[
+    {q:"أشر إلى المقعد وسحابة وشجرة."},
+    {q:"أشر إلى طفل لا يرتدي شورتاً (بنطال قصير)."},
+    {q:"أشر إلى الكرة وفراشة وحبل القفز."},
+    {q:"ماذا قد يحدث بعد ذلك؟",hint:"أشر إلى الولد الذي على الزحليقة"},
+    {q:"هؤلاء ثلاثة أطفال – أيّهم لا يأكل فاكهة؟"},
+    {q:"ماذا قد تفكر البنت؟",hint:"أشر إلى البنت التي تأكل التفاحة"},
+    {q:"ماذا تعني كلمة 'ملعب'؟"},
+    {q:"ماذا تعني كلمة 'مشاركة / تقاسم'؟"},
+    {q:"أشر إلى شيء لا يمكنك الأرجحة عليه."},
+    {q:"كيف تشعر البنت؟",hint:"أشر إلى البنت التي تأكل التفاحة"},
+  ],
+  4:[
+    {q:"ماذا ستفعل لو سقط الولد من الزحليقة؟"},
+    {q:"أخبرني بشيئين آخرين (غير الزحليقة) يمكنك تسلّقهما."},
+    {q:"ما الفصل من العام؟ وكيف تعرف ذلك؟"},
+    {q:"لماذا تعتقد أن بعض الأطفال يرتدون شورتاً (بنطال قصير)؟"},
+    {q:"كرة القدم شكلها مستدير – ماذا سيحدث لو لم تكن مستديرة؟"},
+    {q:"لو لم يكن للأطفال ملعب قريباً منهم، أين يمكنهم اللعب؟"},
+    {q:"لماذا يأكل الأطفال طعامهم على المقعد؟"},
+    {q:"لماذا يلعب الأطفال في الملعب؟"},
+    {q:"يوجد سياج حول الملعب – لماذا؟",hint:"أشر إلى السياج"},
+    {q:"كيف تعرف أن الأطفال يلعبون في الخارج؟"},
+  ]
+};
+
+const colors=["n1","n2","n3","n4"];
+
+function buildAll(){
+  [1,2,3,4].forEach(lvl=>{
+    const c=document.getElementById('q'+lvl);
+    data[lvl].forEach((item,i)=>{
+      const d=document.createElement('div');
+      d.className='q-card';
+      d.innerHTML=`
+        <div class="q-num ${colors[lvl-1]}">${i+1}</div>
+        <div class="q-body">
+          <div class="q-text">${item.q}</div>
+          ${item.hint?`<div class="q-hint">💡 ${item.hint}</div>`:''}
+          <textarea class="answer-box" rows="1" placeholder="الإجابة..."
+            oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"></textarea>
+        </div>`;
+      c.appendChild(d);
+    });
+  });
+}
+
+function show(n){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('p'+n).classList.add('active');
+  document.querySelectorAll('.tab-btn')[n-1].classList.add('active');
+}
+
+function clearAll(){
+  if(confirm('هل تريد مسح جميع الإجابات؟')){
+    document.querySelectorAll('.answer-box').forEach(el=>{el.value='';el.style.height='auto'});
+  }
+}
+
+function loadImg(input){
+  if(!input.files||!input.files[0])return;
+  const r=new FileReader();
+  r.onload=e=>{
+    const img=document.getElementById('playgroundImg');
+    img.src=e.target.result;
+    img.style.display='block';
+    document.getElementById('uploadPrompt').style.display='none';
+  };
+  r.readAsDataURL(input.files[0]);
+}
+
+// Try to embed the uploaded image directly as base64
+// The image was provided in the conversation
+buildAll();
+</script>
+</body>
+</html>
