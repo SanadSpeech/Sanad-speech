@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>قصص الطبيعة | Nature Stories</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800&family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #2d6a4f;
+    --green-light: #52b788;
+    --green-soft: #d8f3dc;
+    --yellow: #f4a261;
+    --yellow-light: #fef3c7;
+    --sky: #90e0ef;
+    --white: #ffffff;
+    --text: #1b3a2d;
+    --radius: 20px;
+    --shadow: 0 8px 32px rgba(45,106,79,0.15);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Tajawal', sans-serif;
+    background: linear-gradient(135deg, #d8f3dc 0%, #b7e4c7 50%, #90e0ef 100%);
+    min-height: 100vh;
+    padding: 20px;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  /* Floating nature elements */
+  .nature-bg {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+  .leaf {
+    position: absolute;
+    font-size: 2rem;
+    opacity: 0.2;
+    animation: floatLeaf 8s ease-in-out infinite;
+  }
+  .leaf:nth-child(1) { top: 10%; left: 5%; animation-delay: 0s; }
+  .leaf:nth-child(2) { top: 30%; right: 8%; animation-delay: 2s; font-size: 1.5rem; }
+  .leaf:nth-child(3) { top: 60%; left: 3%; animation-delay: 4s; font-size: 2.5rem; }
+  .leaf:nth-child(4) { top: 80%; right: 5%; animation-delay: 1s; }
+  .leaf:nth-child(5) { top: 50%; left: 50%; animation-delay: 3s; font-size: 1.2rem; }
+
+  @keyframes floatLeaf {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-20px) rotate(10deg); }
+  }
+
+  .container {
+    max-width: 750px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    margin-bottom: 30px;
+    animation: fadeDown 0.6s ease;
+  }
+  .header h1 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 2.5rem;
+    color: var(--green);
+    text-shadow: 2px 2px 0 rgba(255,255,255,0.5);
+    margin-bottom: 5px;
+  }
+  .header p { color: var(--green); font-size: 1rem; opacity: 0.8; }
+
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Story selector */
+  .story-selector {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 30px;
+  }
+
+  .story-btn {
+    background: white;
+    border: 3px solid var(--green-soft);
+    border-radius: var(--radius);
+    padding: 20px 15px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: var(--shadow);
+  }
+  .story-btn:hover, .story-btn.active {
+    border-color: var(--green-light);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px rgba(45,106,79,0.2);
+    background: var(--green-soft);
+  }
+  .story-btn .emoji { font-size: 2.5rem; display: block; margin-bottom: 8px; }
+  .story-btn .title-ar { font-size: 1rem; font-weight: 700; color: var(--green); }
+  .story-btn .title-en { font-size: 0.8rem; color: #666; margin-top: 3px; }
+
+  /* Story card */
+  .story-card {
+    background: white;
+    border-radius: 24px;
+    padding: 30px;
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+    animation: fadeIn 0.5s ease;
+    display: none;
+  }
+  .story-card.active { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .story-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px dashed var(--green-soft);
+  }
+  .story-icon { font-size: 3rem; }
+  .story-title-ar {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--green);
+  }
+  .story-title-en {
+    font-size: 0.9rem;
+    color: #888;
+    font-family: 'Fredoka One', cursive;
+  }
+
+  .story-text {
+    background: var(--green-soft);
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 20px;
+    line-height: 2;
+    font-size: 1.1rem;
+    color: var(--text);
+    border-right: 4px solid var(--green-light);
+  }
+
+  .story-text-en {
+    background: var(--yellow-light);
+    border-radius: 15px;
+    padding: 15px 20px;
+    margin-bottom: 20px;
+    line-height: 1.8;
+    font-size: 0.95rem;
+    color: #5a4000;
+    direction: ltr;
+    text-align: left;
+    border-left: 4px solid var(--yellow);
+    font-family: 'Tajawal', sans-serif;
+  }
+
+  /* Questions */
+  .questions-section {
+    margin-top: 25px;
+  }
+  .questions-title {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: var(--green);
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .question-card {
+    background: white;
+    border: 2px solid var(--green-soft);
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 15px;
+    box-shadow: 0 4px 15px rgba(45,106,79,0.08);
+  }
+
+  .question-text {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 12px;
+  }
+  .question-text-en {
+    font-size: 0.85rem;
+    color: #888;
+    margin-bottom: 12px;
+    direction: ltr;
+    text-align: left;
+  }
+
+  .options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .option-btn {
+    background: var(--green-soft);
+    border: 2px solid transparent;
+    border-radius: 12px;
+    padding: 10px 15px;
+    font-family: 'Tajawal', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--green);
+    cursor: pointer;
+    transition: all 0.25s;
+    text-align: center;
+  }
+  .option-btn:hover { border-color: var(--green-light); transform: scale(1.02); }
+  .option-btn.correct {
+    background: #52b788;
+    color: white;
+    border-color: #2d6a4f;
+    animation: pop 0.3s ease;
+  }
+  .option-btn.wrong {
+    background: #ffb4ab;
+    color: #7a0000;
+    border-color: #ff6b6b;
+    animation: shake 0.3s ease;
+  }
+  .option-btn.disabled { pointer-events: none; opacity: 0.6; }
+
+  @keyframes pop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+  }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+  }
+
+  .feedback {
+    margin-top: 10px;
+    padding: 8px 12px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    display: none;
+  }
+  .feedback.show { display: block; }
+  .feedback.correct { background: #d8f3dc; color: var(--green); }
+  .feedback.wrong { background: #ffe4e1; color: #c0392b; }
+
+  /* Score */
+  .score-bar {
+    background: white;
+    border-radius: var(--radius);
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+  }
+  .score-label { font-weight: 700; color: var(--green); font-size: 0.95rem; }
+  .score-value {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.5rem;
+    color: var(--green);
+  }
+  .stars { font-size: 1.3rem; }
+
+  /* Reset btn */
+  .reset-btn {
+    background: var(--green);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 10px 25px;
+    font-family: 'Tajawal', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 10px;
+  }
+  .reset-btn:hover { background: var(--green-light); transform: scale(1.05); }
+
+  /* Celebration */
+  .celebration {
+    text-align: center;
+    padding: 20px;
+    display: none;
+    animation: fadeIn 0.5s ease;
+  }
+  .celebration.show { display: block; }
+  .celebration .emoji-big { font-size: 4rem; display: block; margin-bottom: 10px; }
+  .celebration h3 { font-size: 1.5rem; color: var(--green); font-weight: 800; }
+
+  /* Back btn */
+  .back-btn {
+    background: transparent;
+    border: 2px solid var(--green-light);
+    border-radius: 12px;
+    padding: 8px 20px;
+    font-family: 'Tajawal', sans-serif;
+    font-size: 0.95rem;
+    color: var(--green);
+    cursor: pointer;
+    margin-bottom: 20px;
+    transition: all 0.2s;
+    display: none;
+  }
+  .back-btn.show { display: inline-block; }
+  .back-btn:hover { background: var(--green-soft); }
+</style>
+</head>
+<body>
+
+<div class="nature-bg">
+  <div class="leaf">🍃</div>
+  <div class="leaf">🌿</div>
+  <div class="leaf">🍀</div>
+  <div class="leaf">🌱</div>
+  <div class="leaf">🌸</div>
+</div>
+
+<div class="container">
+  <div class="header">
+    <h1>🌿 قصص الطبيعة</h1>
+    <p>Nature Stories — اختر قصة وأجب على الأسئلة!</p>
+  </div>
+
+  <div class="score-bar">
+    <span class="score-label">⭐ نقاطك / Your Score</span>
+    <span class="score-value" id="scoreDisplay">0</span>
+    <span class="stars" id="starsDisplay">🌑🌑🌑</span>
+  </div>
+
+  <button class="back-btn" id="backBtn" onclick="showSelector()">← العودة / Back</button>
+
+  <!-- Story Selector -->
+  <div class="story-selector" id="storySelector">
+    <div class="story-btn" onclick="showStory(0)">
+      <span class="emoji">🦋</span>
+      <div class="title-ar">الفراشة الجميلة</div>
+      <div class="title-en">The Beautiful Butterfly</div>
+    </div>
+    <div class="story-btn" onclick="showStory(1)">
+      <span class="emoji">🌧️</span>
+      <div class="title-ar">يوم المطر</div>
+      <div class="title-en">The Rainy Day</div>
+    </div>
+    <div class="story-btn" onclick="showStory(2)">
+      <span class="emoji">🌳</span>
+      <div class="title-ar">الشجرة الكبيرة</div>
+      <div class="title-en">The Big Tree</div>
+    </div>
+  </div>
+
+  <!-- Stories -->
+  <div id="storiesContainer"></div>
+</div>
+
+<script>
+const stories = [
+  {
+    id: 0,
+    icon: "🦋",
+    titleAr: "الفراشة الجميلة",
+    titleEn: "The Beautiful Butterfly",
+    textAr: "كانت هناك فراشة صغيرة تعيش في الحديقة. كانت جناحاها ملونان بالأصفر والبرتقالي. كل صباح، كانت الفراشة تطير من زهرة إلى زهرة وتجمع الرحيق. ذات يوم، جاء المطر فاختبأت الفراشة تحت ورقة خضراء كبيرة. عندما توقف المطر، خرجت الفراشة مرة أخرى وتألقت جناحاها في ضوء الشمس.",
+    textEn: "There was a small butterfly living in the garden. Her wings were colored yellow and orange. Every morning, the butterfly flew from flower to flower collecting nectar. One day, the rain came and the butterfly hid under a big green leaf. When the rain stopped, the butterfly came out again and her wings shone in the sunlight.",
+    questions: [
+      {
+        ar: "ما لون جناحي الفراشة؟",
+        en: "What color are the butterfly's wings?",
+        options: ["أصفر وبرتقالي 🟡", "أزرق وأخضر 💙", "أحمر وبنفسجي ❤️", "وردي وأبيض 🌸"],
+        correct: 0,
+        feedbackAr: "ممتاز! جناحاها أصفر وبرتقالي 🦋",
+        feedbackEn: "Excellent! Her wings are yellow and orange!"
+      },
+      {
+        ar: "ماذا تجمع الفراشة من الزهور؟",
+        en: "What does the butterfly collect from flowers?",
+        options: ["الماء 💧", "الرحيق 🍯", "البذور 🌰", "التراب 🪨"],
+        correct: 1,
+        feedbackAr: "صحيح! الفراشة تجمع الرحيق 🌺",
+        feedbackEn: "Correct! The butterfly collects nectar!"
+      },
+      {
+        ar: "أين اختبأت الفراشة من المطر؟",
+        en: "Where did the butterfly hide from the rain?",
+        options: ["تحت حجر 🪨", "في بيت 🏠", "تحت ورقة خضراء 🍃", "على شجرة 🌳"],
+        correct: 2,
+        feedbackAr: "أحسنت! اختبأت تحت ورقة خضراء 🍃",
+        feedbackEn: "Well done! She hid under a green leaf!"
+      }
+    ]
+  },
+  {
+    id: 1,
+    icon: "🌧️",
+    titleAr: "يوم المطر",
+    titleEn: "The Rainy Day",
+    textAr: "في صباح يوم الجمعة، استيقظ سامي وسمع صوت المطر على النافذة. نظر إلى الخارج ورأى السماء رمادية والشوارع مليئة بالمياه. فرح سامي كثيراً لأن المطر يجعل النباتات تنمو. لبس سامي معطفه وحذاءه المطري وخرج للعب في البرك الصغيرة. عندما رجع إلى البيت، شرب كوباً دافئاً من الشاي مع أمه.",
+    textEn: "On Friday morning, Sami woke up and heard the sound of rain on the window. He looked outside and saw a gray sky and streets full of water. Sami was very happy because rain makes plants grow. Sami put on his raincoat and rain boots and went out to play in the small puddles. When he came back home, he drank a warm cup of tea with his mother.",
+    questions: [
+      {
+        ar: "متى استيقظ سامي؟",
+        en: "When did Sami wake up?",
+        options: ["يوم السبت 📅", "يوم الجمعة 📅", "يوم الأحد 📅", "يوم الاثنين 📅"],
+        correct: 1,
+        feedbackAr: "ممتاز! استيقظ يوم الجمعة 📅",
+        feedbackEn: "Excellent! He woke up on Friday!"
+      },
+      {
+        ar: "لماذا فرح سامي بالمطر؟",
+        en: "Why was Sami happy about the rain?",
+        options: ["يحب البرد ❄️", "المطر يجعل النباتات تنمو 🌱", "لا يحب المدرسة 🏫", "يريد اللعب فقط 🎮"],
+        correct: 1,
+        feedbackAr: "صحيح! المطر يجعل النباتات تنمو 🌱",
+        feedbackEn: "Correct! Rain makes plants grow!"
+      },
+      {
+        ar: "ماذا شرب سامي عندما رجع؟",
+        en: "What did Sami drink when he came back?",
+        options: ["عصير برتقال 🍊", "ماء بارد 💧", "شاي دافئ ☕", "حليب 🥛"],
+        correct: 2,
+        feedbackAr: "أحسنت! شرب شاياً دافئاً ☕",
+        feedbackEn: "Well done! He drank warm tea!"
+      }
+    ]
+  },
+  {
+    id: 2,
+    icon: "🌳",
+    titleAr: "الشجرة الكبيرة",
+    titleEn: "The Big Tree",
+    textAr: "في وسط الغابة، كانت هناك شجرة ضخمة عمرها مئة سنة. كانت الطيور تبني أعشاشها بين أغصانها. والسناجب كانت تخبئ الجوز في جذورها. في الصيف، كانت الشجرة تعطي ظلاً باردًا للحيوانات. وفي الخريف، كانت أوراقها تتحول إلى اللون الأحمر والذهبي. كانت الشجرة تحب أن تكون بيتاً للجميع.",
+    textEn: "In the middle of the forest, there was a huge tree that was one hundred years old. Birds built their nests among its branches. Squirrels hid their nuts in its roots. In summer, the tree gave cool shade to the animals. In autumn, its leaves turned red and golden. The tree loved being a home for everyone.",
+    questions: [
+      {
+        ar: "كم عمر الشجرة؟",
+        en: "How old is the tree?",
+        options: ["خمسين سنة", "مئة سنة 💯", "عشر سنوات", "ألف سنة"],
+        correct: 1,
+        feedbackAr: "ممتاز! عمرها مئة سنة 🌳",
+        feedbackEn: "Excellent! It's one hundred years old!"
+      },
+      {
+        ar: "من يخبئ الجوز في جذور الشجرة؟",
+        en: "Who hides nuts in the tree's roots?",
+        options: ["الطيور 🐦", "الأرانب 🐰", "السناجب 🐿️", "النمل 🐜"],
+        correct: 2,
+        feedbackAr: "صحيح! السناجب تخبئ الجوز 🐿️",
+        feedbackEn: "Correct! Squirrels hide the nuts!"
+      },
+      {
+        ar: "ما لون الأوراق في الخريف؟",
+        en: "What color are the leaves in autumn?",
+        options: ["أخضر وأزرق 💚", "أبيض وأسود ⬛", "أحمر وذهبي 🍂", "بنفسجي ووردي 💜"],
+        correct: 2,
+        feedbackAr: "أحسنت! الأوراق حمراء وذهبية 🍂",
+        feedbackEn: "Well done! Leaves are red and golden!"
+      }
+    ]
+  }
+];
+
+let score = 0;
+let answered = {};
+
+function showSelector() {
+  document.getElementById('storySelector').style.display = 'grid';
+  document.getElementById('storiesContainer').innerHTML = '';
+  document.getElementById('backBtn').classList.remove('show');
+}
+
+function showStory(index) {
+  const story = stories[index];
+  document.getElementById('storySelector').style.display = 'none';
+  document.getElementById('backBtn').classList.add('show');
+
+  const key = `story_${index}`;
+  if (!answered[key]) answered[key] = {};
+
+  let questionsHTML = story.questions.map((q, qi) => {
+    const qKey = `${key}_q${qi}`;
+    const isAnswered = answered[key][qi] !== undefined;
+    return `
+      <div class="question-card" id="qcard_${qi}">
+        <div class="question-text">❓ ${q.ar}</div>
+        <div class="question-text-en">${q.en}</div>
+        <div class="options">
+          ${q.options.map((opt, oi) => `
+            <button class="option-btn ${isAnswered ? (oi === q.correct ? 'correct' : (oi === answered[key][qi] ? 'wrong' : 'disabled')) : ''}"
+              onclick="answer(${index}, ${qi}, ${oi})" id="opt_${qi}_${oi}">
+              ${opt}
+            </button>
+          `).join('')}
+        </div>
+        <div class="feedback ${isAnswered ? 'show' : ''} ${isAnswered && answered[key][qi] === q.correct ? 'correct' : 'wrong'}" id="fb_${qi}">
+          ${isAnswered ? (answered[key][qi] === q.correct ? '✅ ' + q.feedbackAr + ' — ' + q.feedbackEn : '❌ حاول مرة أخرى! / Try again!') : ''}
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  document.getElementById('storiesContainer').innerHTML = `
+    <div class="story-card active">
+      <div class="story-header">
+        <span class="story-icon">${story.icon}</span>
+        <div>
+          <div class="story-title-ar">${story.titleAr}</div>
+          <div class="story-title-en">${story.titleEn}</div>
+        </div>
+      </div>
+      <div class="story-text">${story.textAr}</div>
+      <div class="story-text-en">${story.textEn}</div>
+      <div class="questions-section">
+        <div class="questions-title">📝 أجب على الأسئلة / Answer the Questions</div>
+        ${questionsHTML}
+        <button class="reset-btn" onclick="resetStory(${index})">🔄 إعادة المحاولة / Try Again</button>
+      </div>
+    </div>
+  `;
+}
+
+function answer(storyIndex, qIndex, optIndex) {
+  const story = stories[storyIndex];
+  const q = story.questions[qIndex];
+  const key = `story_${storyIndex}`;
+
+  if (answered[key][qIndex] !== undefined) return;
+  answered[key][qIndex] = optIndex;
+
+  const isCorrect = optIndex === q.correct;
+  if (isCorrect) score += 10;
+  updateScore();
+
+  // Update buttons
+  q.options.forEach((_, oi) => {
+    const btn = document.getElementById(`opt_${qIndex}_${oi}`);
+    if (oi === q.correct) btn.classList.add('correct');
+    else if (oi === optIndex) btn.classList.add('wrong');
+    btn.classList.add('disabled');
+  });
+
+  // Show feedback
+  const fb = document.getElementById(`fb_${qIndex}`);
+  fb.classList.add('show');
+  fb.classList.add(isCorrect ? 'correct' : 'wrong');
+  fb.textContent = isCorrect ? '✅ ' + q.feedbackAr + ' — ' + q.feedbackEn : '❌ حاول مرة أخرى! / Try again!';
+}
+
+function resetStory(index) {
+  const key = `story_${index}`;
+  answered[key] = {};
+  showStory(index);
+}
+
+function updateScore() {
+  document.getElementById('scoreDisplay').textContent = score;
+  const stars = score >= 60 ? '⭐⭐⭐' : score >= 30 ? '⭐⭐🌑' : score >= 10 ? '⭐🌑🌑' : '🌑🌑🌑';
+  document.getElementById('starsDisplay').textContent = stars;
+}
+</script>
+</body>
+</html>
